@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>විවාහ ආරාධනයයි! - හසිනි සහ කවිදු</title>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Abhaya Libre', serif;
+        }
+
+        body {
+            background-color: #0b0907;
+            color: #d4af37;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .app-viewport {
+            width: 100vw;
+            min-height: 100vh;
+            position: relative;
+            background: #0d0a07;
+        }
+
+        /* Fixed Background Image for Page 2 */
+        .page2-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: url('Front image.jpg') center/cover no-repeat;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .page2-bg-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 9, 7, 0.85);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Canvas for Rose Petals */
+        #petal-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* --- PAGE 1: COVER SCREEN --- */
+        #page-hero {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: url('Front image.jpg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px 30px;
+            z-index: 10;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .hero-vignette {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(11, 9, 7, 0.25) 30%, rgba(11, 9, 7, 0.95) 90%);
+            backdrop-filter: blur(2px);
+            z-index: 1;
+        }
+
+        .hero-top-text { position: relative; z-index: 2; }
+        .hero-subtitle { color: #f3e5ab; font-size: 1.3rem; letter-spacing: 3px; }
+        .hero-title { color: #ffffff; font-size: 2.5rem; font-weight: 800; }
+        .couple-names { position: relative; z-index: 2; color: #ffffff; font-size: 2.8rem; font-weight: 800; }
+
+        .view-details-btn {
+            position: relative;
+            z-index: 2;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.6);
+            color: #f3e5ab;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .view-details-btn span { font-size: 1rem; animation: bounce 2s infinite; }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(6px); }
+            60% { transform: translateY(3px); }
+        }
+
+        /* --- PAGE 2: DETAILS SECTION --- */
+        #page-details {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+            display: none;
+            opacity: 0;
+            padding: 30px 18px 40px;
+            transition: opacity 0.8s ease;
+        }
+
+        .section {
+            padding: 30px 10px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+        }
+
+        .section-title {
+            color: #d4af37;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        /* Pop-up Animation Styling */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease-out;
+            will-change: transform, opacity;
+        }
+
+        .animate-on-scroll.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .info-card {
+            background: rgba(13, 10, 7, 0.65);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .info-card h4 { color: #ffffff; font-size: 1.25rem; margin-bottom: 6px; }
+        .info-card p { color: #e3d5c1; font-size: 1.1rem; line-height: 1.6; }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-box {
+            background: rgba(13, 10, 7, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            border-radius: 10px;
+            padding: 12px 5px;
+            backdrop-filter: blur(6px);
+        }
+
+        .time-box .number { font-family: 'Cinzel', serif; color: #ffffff; font-size: 1.4rem; font-weight: 700; }
+        .time-box .label { color: #d4af37; font-size: 0.85rem; }
+
+        .rsvp-form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { color: #e3d5c1; font-size: 1rem; }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1.05rem;
+            outline: none;
+        }
+
+        .form-group select option { background-color: #18130d; color: #f3e5ab; }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+            color: #000;
+            font-weight: 800;
+            font-size: 1.15rem;
+            padding: 14px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .map-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 9px 20px;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            text-decoration: none;
+            border-radius: 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 24px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .footer { padding: 25px 20px; text-align: center; color: #b5a48b; }
+    </style>
+</head>
+<body>
+
+    <div class="app-viewport">
+        <div id="page2-bg" class="page2-bg">
+            <div class="page2-bg-overlay"></div>
+        </div>
+
+        <canvas id="petal-canvas"></canvas>
+
+        <!-- PAGE 1: COVER SCREEN -->
+        <div id="page-hero">
+            <div class="hero-vignette"></div>
+            <div class="hero-top-text">
+                <div class="hero-subtitle">ශ්‍රී සුබ මංගලම්!</div>
+                <h1 class="hero-title">විවාහ ආරාධනයයි</h1>
+            </div>
+            <div class="couple-names">හසිනි සහ කවිදු</div>
+            <button class="view-details-btn" onclick="openDetailsPage()">
+                විස්තර බලන්න
+                <span>▼</span>
+            </button>
+        </div>
+
+        <!-- PAGE 2: DETAILS SECTION -->
+        <div id="page-details">
+            <div class="section animate-on-scroll">
+                <h3 class="section-title">❖ දෙමාපිය ආශීර්වාදය ❖</h3>
+                <div class="info-card">
+                    <h4>👰 මනාලියගේ පවුලේ විස්තර</h4>
+                    <p>මෙහි මනාලියගේ දෙමාපියන්ගේ විස්තර සහ පවුලේ කෙටි හැඳින්වීම ඇතුළත් කිරීමට ඉඩ තබා ඇත.</p>
+                </div>
+                <div class="info-card">
+                    <h4>🤵 මනාලයාගේ පවුලේ විස්තර</h4>
+                    <p>මෙහි මනාලයාගේ දෙමාපියන්ගේ විස්තර සහ පවුලේ කෙටි හැඳින්වීම ඇතුළත් කිරීමට ඉඩ තබා ඇත.</p>
+                </div>
+            </div>
+
+            <div class="section animate-on-scroll">
+                <h3 class="section-title">❖ උත්සව තොරතුරු ❖</h3>
+                <div class="info-card">
+                    <h4>📅 දිනය</h4>
+                    <p>2026 ජනවාරි මස 15 වන අඟහරුවාදා</p>
+                </div>
+                <div class="info-card">
+                    <h4>⏰ වේලාව</h4>
+                    <p>පෝරුවේ චාරිත්‍ර: පෙ.ව. 09:15 ට</p>
+                    <p>මංගල භෝජන සංග්‍රහය: ප.ව. 12:30 ට</p>
+                </div>
+                <div class="info-card">
+                    <h4>📍 ස්ථානය</h4>
+                    <p><strong>Grand Monarch Hotel</strong></p>
+                    <p>කොච්චිකඩේ, මීගමුව</p>
+                    <a href="https://maps.google.com" target="_blank" class="map-btn">🗺️ Google Maps බලන්න</a>
+                </div>
+            </div>
+
+            <div class="section animate-on-scroll">
+                <h3 class="section-title">❖ සුබ මොහොතට තව... ❖</h3>
+                <div class="countdown-grid">
+                    <div class="time-box"><div class="number">120</div><div class="label">දින</div></div>
+                    <div class="time-box"><div class="number">14</div><div class="label">පැය</div></div>
+                    <div class="time-box"><div class="number">32</div><div class="label">මිනිත්තු</div></div>
+                    <div class="time-box"><div class="number">45</div><div class="label">තත්පර</div></div>
+                </div>
+            </div>
+
+            <div class="section animate-on-scroll">
+                <h3 class="section-title">❖ පැමිණීම තහවුරු කරන්න ❖</h3>
+                <form class="rsvp-form" onsubmit="alert('ස්තූතියි!'); return false;">
+                    <div class="form-group">
+                        <label for="guest-name">ඔබගේ නම:</label>
+                        <input type="text" id="guest-name" placeholder="නම ඇතුළත් කරන්න" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="attending">ඔබ පැමිණෙනවාද?</label>
+                        <select id="attending" required>
+                            <option value="">තෝරන්න...</option>
+                            <option value="yes">ඔවු, මම/අපි පැමිණෙනවා ✨</option>
+                            <option value="no">කනගාටුයි, පැමිණීමට නොහැක 😔</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="guests">පැමිණෙන ගණන:</label>
+                        <select id="guests">
+                            <option value="1">1 යි</option>
+                            <option value="2">2 යි</option>
+                            <option value="3">3 යි හෝ ඊට වැඩි</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">සුබ පැතුම් පණිවිඩයක්:</label>
+                        <textarea id="message" rows="3" placeholder="ඔබගේ සුබ පැතුම්..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">තහවුරු කරන්න</button>
+                </form>
+            </div>
+
+            <div class="footer animate-on-scroll">
+                <p>අපගේ සුබ මොහොතට ඔබ සැමට ආදරයෙන් ඇරයුම් කරමු!</p>
+                <button class="back-btn" onclick="openHeroPage()">▲ ආපසු මුල් පිටුවට</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openDetailsPage() {
+            const heroPage = document.getElementById('page-hero');
+            const detailsPage = document.getElementById('page-details');
+            const page2Bg = document.getElementById('page2-bg');
+
+            heroPage.style.opacity = '0';
+            setTimeout(() => {
+                heroPage.style.visibility = 'hidden';
+                detailsPage.style.display = 'block';
+                page2Bg.style.opacity = '1';
+                window.scrollTo(0, 0);
+
+                setTimeout(() => {
+                    detailsPage.style.opacity = '1';
+                    initScrollObserver();
+                    startPetalAnimation();
+                }, 50);
+            }, 800);
+        }
+
+        function openHeroPage() {
+            const heroPage = document.getElementById('page-hero');
+            const detailsPage = document.getElementById('page-details');
+            const page2Bg = document.getElementById('page2-bg');
+
+            detailsPage.style.opacity = '0';
+            page2Bg.style.opacity = '0';
+            setTimeout(() => {
+                detailsPage.style.display = 'none';
+                heroPage.style.visibility = 'visible';
+                heroPage.style.opacity = '1';
+
+                document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                    el.classList.remove('active');
+                });
+
+                stopPetalAnimation();
+            }, 800);
+        }
+
+        function initScrollObserver() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px 0px -50px 0px',
+                threshold: 0.05
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-on-scroll').forEach(section => {
+                observer.observe(section);
+            });
+        }
+
+        /* Rose Petal Animation Engine */
+        const canvas = document.getElementById('petal-canvas');
+        const ctx = canvas.getContext('2d');
+        let petals = [];
+        let animId;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class RosePetal {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * -canvas.height;
+                this.size = Math.random() * 12 + 10;
+                this.speedY = Math.random() * 1.2 + 0.8;
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.02;
+                this.oscillationSpeed = Math.random() * 0.03 + 0.01;
+                this.oscillationDistance = Math.random() * 40 + 20;
+                this.initialX = this.x;
+                this.opacity = Math.random() * 0.4 + 0.5;
+                const colors = ['rgba(255, 182, 193, ', 'rgba(255, 105, 180, ', 'rgba(240, 128, 128, ', 'rgba(255, 192, 203, '];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.y += this.speedY;
+                this.x = this.initialX + Math.sin(this.y * this.oscillationSpeed) * this.oscillationDistance + this.speedX;
+                this.angle += this.spin;
+                if (this.y > canvas.height + 30) { this.reset(); this.y = -20; }
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color + this.opacity + ')';
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, this.size / 3, 0, this.size);
+                ctx.bezierCurveTo(this.size, this.size / 3, this.size / 2, -this.size / 2, 0, 0);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function startPetalAnimation() {
+            petals = Array.from({ length: 40 }, () => new RosePetal());
+            function loop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                petals.forEach(p => { p.update(); p.draw(); });
+                animId = requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        function stopPetalAnimation() {
+            cancelAnimationFrame(animId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
