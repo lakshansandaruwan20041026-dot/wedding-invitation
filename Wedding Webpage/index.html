@@ -27,7 +27,6 @@
             background: #0d0a07;
         }
 
-        /* Fixed Background Image for Page 2 */
         .page2-bg {
             position: fixed;
             top: 0; left: 0;
@@ -46,7 +45,6 @@
             backdrop-filter: blur(4px);
         }
 
-        /* Canvas for Rose Petals */
         #petal-canvas {
             position: fixed;
             top: 0; left: 0;
@@ -55,7 +53,6 @@
             z-index: 1;
         }
 
-        /* --- PAGE 1: COVER SCREEN --- */
         #page-hero {
             position: fixed;
             top: 0; left: 0;
@@ -111,7 +108,6 @@
             60% { transform: translateY(3px); }
         }
 
-        /* --- PAGE 2: DETAILS SECTION --- */
         #page-details {
             width: 100%;
             max-width: 480px;
@@ -137,7 +133,6 @@
             margin-bottom: 20px;
         }
 
-        /* Pop-up Animation Styling */
         .animate-on-scroll {
             opacity: 0;
             transform: translateY(50px) scale(0.95);
@@ -208,6 +203,19 @@
             border-radius: 30px;
             cursor: pointer;
             margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin-top: 12px;
+            font-size: 1.05rem;
+            text-align: center;
+            display: none;
         }
 
         .map-btn {
@@ -303,32 +311,33 @@
 
             <div class="section animate-on-scroll">
                 <h3 class="section-title">❖ පැමිණීම තහවුරු කරන්න ❖</h3>
-                <form class="rsvp-form" onsubmit="alert('ස්තූතියි!'); return false;">
+                <form class="rsvp-form" id="rsvp-form">
                     <div class="form-group">
                         <label for="guest-name">ඔබගේ නම:</label>
-                        <input type="text" id="guest-name" placeholder="නම ඇතුළත් කරන්න" required>
+                        <input type="text" id="guest-name" name="name" placeholder="නම ඇතුළත් කරන්න" required>
                     </div>
                     <div class="form-group">
                         <label for="attending">ඔබ පැමිණෙනවාද?</label>
-                        <select id="attending" required>
+                        <select id="attending" name="attending" required>
                             <option value="">තෝරන්න...</option>
-                            <option value="yes">ඔවු, මම/අපි පැමිණෙනවා ✨</option>
-                            <option value="no">කනගාටුයි, පැමිණීමට නොහැක 😔</option>
+                            <option value="ඔවු, පැමිණෙනවා">ඔවු, මම/අපි පැමිණෙනවා ✨</option>
+                            <option value="පැමිණීමට නොහැක">කනගාටුයි, පැමිණීමට නොහැක 😔</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="guests">පැමිණෙන ගණන:</label>
-                        <select id="guests">
+                        <select id="guests" name="count">
                             <option value="1">1 යි</option>
                             <option value="2">2 යි</option>
-                            <option value="3">3 යි හෝ ඊට වැඩි</option>
+                            <option value="3+">3 යි හෝ ඊට වැඩි</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="message">සුබ පැතුම් පණිවිඩයක්:</label>
-                        <textarea id="message" rows="3" placeholder="ඔබගේ සුබ පැතුම්..."></textarea>
+                        <textarea id="message" name="message" rows="3" placeholder="ඔබගේ සුබ පැතුම්..."></textarea>
                     </div>
-                    <button type="submit" class="submit-btn">තහවුරු කරන්න</button>
+                    <button type="submit" id="submit-btn" class="submit-btn">තහවුරු කරන්න</button>
+                    <div id="status-message" class="status-message"></div>
                 </form>
             </div>
 
@@ -464,6 +473,44 @@
             cancelAnimationFrame(animId);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
+
+        /* RSVP Form Handling - Fixed CORS & Data Submission */
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbybmiR7zcLCFEkbRHZVrMD9XH0FIF5SkXUgn-pxfvb6HAdjqsa5eJlJKdJ2xaQLJ2jhDA/exec';
+        const form = document.getElementById('rsvp-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const statusMsg = document.getElementById('status-message');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            submitBtn.disabled = true;
+            submitBtn.innerText = 'යවමින් පවතී...';
+            statusMsg.style.display = 'none';
+
+            const formData = new FormData(form);
+            const data = new URLSearchParams(formData);
+
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: data 
+            })
+            .then(response => {
+                statusMsg.style.color = '#d4af37';
+                statusMsg.innerText = 'ඔබගේ තොරතුරු සාර්ථකව සටහන් කරගන්නා ලදී. ස්තූතියි!';
+                statusMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'තහවුරු කරන්න';
+                form.reset();
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                statusMsg.style.color = '#ff6b6b';
+                statusMsg.innerText = 'යම් දෝෂයක් සිදු විය. නැවත උත්සාහ කරන්න.';
+                statusMsg.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'තහවුරු කරන්න';
+            });
+        });
     </script>
 </body>
 </html>
