@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>විවාහ ආරාධනයයි! - හසිනි සහ කවිදු</title>
+    <title>විවාහ ආරාධනයයි!</title>
     <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -21,7 +21,7 @@
         }
 
         .app-viewport {
-            width: 100vw;
+            width: 100%;
             min-height: 100vh;
             position: relative;
             background: #0d0a07;
@@ -41,18 +41,11 @@
         .page2-bg-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(11, 9, 7, 0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(11, 9, 7, 0.88);
+            backdrop-filter: blur(5px);
         }
 
-        #petal-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            pointer-events: none;
-            z-index: 1;
-        }
-
+        /* Hero Section (First View) */
         #page-hero {
             position: fixed;
             top: 0; left: 0;
@@ -63,7 +56,7 @@
             justify-content: space-between;
             align-items: center;
             text-align: center;
-            padding: 40px 20px 30px;
+            padding: 40px 20px;
             z-index: 10;
             transition: opacity 0.8s ease, visibility 0.8s ease;
         }
@@ -71,57 +64,87 @@
         .hero-vignette {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(ellipse at center, rgba(11, 9, 7, 0.25) 30%, rgba(11, 9, 7, 0.95) 90%);
-            backdrop-filter: blur(2px);
+            background: radial-gradient(ellipse at center, rgba(11, 9, 7, 0.45) 20%, rgba(11, 9, 7, 0.95) 85%);
+            backdrop-filter: blur(3px);
             z-index: 1;
         }
 
-        .hero-top-text { position: relative; z-index: 2; }
+        .hero-top-text { position: relative; z-index: 2; margin-top: 10px; }
         .hero-subtitle { color: #f3e5ab; font-size: 1.3rem; letter-spacing: 3px; }
-        .hero-title { color: #ffffff; font-size: 2.5rem; font-weight: 800; }
-        .couple-names { position: relative; z-index: 2; color: #ffffff; font-size: 2.8rem; font-weight: 800; }
+        .hero-title { color: #ffffff; font-size: 2.2rem; font-weight: 800; }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 280px;
+            height: 190px;
+            background: linear-gradient(rgba(42, 31, 23, 0.75), rgba(42, 31, 23, 0.75)), url('Front image.jpg') center/cover no-repeat;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.3);
+            cursor: pointer;
+            z-index: 2;
+            margin: auto 0;
+            backdrop-filter: blur(5px);
+        }
+
+        .envelope-card {
+            position: absolute;
+            top: 15px; left: 15px;
+            width: 250px; height: 160px;
+            background: url('Front image.jpg') center/cover no-repeat;
+            border-radius: 6px;
+            border: 2px solid #d4af37;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .card-overlay-text {
+            background: rgba(11, 9, 7, 0.8);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: 1px solid rgba(212, 175, 55, 0.6);
+        }
 
         .view-details-btn {
             position: relative;
             z-index: 2;
-            background: rgba(212, 175, 55, 0.15);
-            border: 1px solid rgba(212, 175, 55, 0.6);
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.8);
             color: #f3e5ab;
-            padding: 12px 28px;
+            padding: 14px 28px;
             border-radius: 30px;
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 700;
             cursor: pointer;
             backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             transition: all 0.3s ease;
+            margin-bottom: 20px;
         }
 
-        .view-details-btn span { font-size: 1rem; animation: bounce 2s infinite; }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(6px); }
-            60% { transform: translateY(3px); }
-        }
-
+        /* Details Section (Second View) */
         #page-details {
             width: 100%;
-            max-width: 480px;
+            max-width: 500px;
             margin: 0 auto;
             position: relative;
             z-index: 2;
             display: none;
             opacity: 0;
-            padding: 30px 18px 40px;
+            padding: 30px 18px 50px;
             transition: opacity 0.8s ease;
         }
 
         .section {
-            padding: 30px 10px;
+            padding: 25px 10px;
             border-bottom: 1px solid rgba(212, 175, 55, 0.2);
             text-align: center;
         }
@@ -133,20 +156,8 @@
             margin-bottom: 20px;
         }
 
-        .animate-on-scroll {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95);
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.8s ease-out;
-            will-change: transform, opacity;
-        }
-
-        .animate-on-scroll.active {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
         .info-card {
-            background: rgba(13, 10, 7, 0.65);
+            background: rgba(13, 10, 7, 0.75);
             border: 1px solid rgba(212, 175, 55, 0.4);
             border-radius: 14px;
             padding: 18px;
@@ -166,7 +177,7 @@
         }
 
         .time-box {
-            background: rgba(13, 10, 7, 0.7);
+            background: rgba(13, 10, 7, 0.8);
             border: 1px solid rgba(212, 175, 55, 0.5);
             border-radius: 10px;
             padding: 12px 5px;
@@ -183,7 +194,7 @@
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 12px 14px;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(212, 175, 55, 0.4);
             border-radius: 8px;
             color: #ffffff;
@@ -204,11 +215,6 @@
             cursor: pointer;
             margin-top: 10px;
             transition: opacity 0.3s;
-        }
-
-        .submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
         }
 
         .status-message {
@@ -239,8 +245,6 @@
             cursor: pointer;
             font-size: 1rem;
         }
-
-        .footer { padding: 25px 20px; text-align: center; color: #b5a48b; }
     </style>
 </head>
 <body>
@@ -250,8 +254,6 @@
             <div class="page2-bg-overlay"></div>
         </div>
 
-        <canvas id="petal-canvas"></canvas>
-
         <!-- PAGE 1: COVER SCREEN -->
         <div id="page-hero">
             <div class="hero-vignette"></div>
@@ -259,32 +261,38 @@
                 <div class="hero-subtitle">ශ්‍රී සුබ මංගලම්!</div>
                 <h1 class="hero-title">විවාහ ආරාධනයයි</h1>
             </div>
-            <div class="couple-names">හසිනි සහ කවිදු</div>
+
+            <div class="envelope-wrapper" onclick="openDetailsPage()">
+                <div class="envelope-card">
+                    <div class="card-overlay-text">ආරාධනා පත්‍රය</div>
+                </div>
+            </div>
+
             <button class="view-details-btn" onclick="openDetailsPage()">
-                විස්තර බලන්න
+                ආරාධනා පත්‍රය විවෘත කරන්න
                 <span>▼</span>
             </button>
         </div>
 
         <!-- PAGE 2: DETAILS SECTION -->
         <div id="page-details">
-            <div class="section animate-on-scroll">
+            <div class="section">
                 <h3 class="section-title">❖ දෙමාපිය ආශීර්වාදය ❖</h3>
                 <div class="info-card">
                     <h4>👰 මනාලියගේ පවුලේ විස්තර</h4>
-                    <p>මෙහි මනාලියගේ දෙමාපියන්ගේ විස්තර සහ පවුලේ කෙටි හැඳින්වීම ඇතුළත් කිරීමට ඉඩ තබා ඇත.</p>
+                    <p>මහත්මයා: ............................................<br>මහත්මිය: ............................................</p>
                 </div>
                 <div class="info-card">
                     <h4>🤵 මනාලයාගේ පවුලේ විස්තර</h4>
-                    <p>මෙහි මනාලයාගේ දෙමාපියන්ගේ විස්තර සහ පවුලේ කෙටි හැඳින්වීම ඇතුළත් කිරීමට ඉඩ තබා ඇත.</p>
+                    <p>මහත්මයා: ............................................<br>මහත්මිය: ............................................</p>
                 </div>
             </div>
 
-            <div class="section animate-on-scroll">
+            <div class="section">
                 <h3 class="section-title">❖ උත්සව තොරතුරු ❖</h3>
                 <div class="info-card">
                     <h4>📅 දිනය</h4>
-                    <p>2026 ජනවාරි මස 15 වන අඟහරුවාදා</p>
+                    <p>2027 ජනවාරි මස 15 වන සිකුරාදා</p>
                 </div>
                 <div class="info-card">
                     <h4>⏰ වේලාව</h4>
@@ -293,23 +301,25 @@
                 </div>
                 <div class="info-card">
                     <h4>📍 ස්ථානය</h4>
-                    <p><strong>Grand Monarch Hotel</strong></p>
-                    <p>කොච්චිකඩේ, මීගමුව</p>
+                    <p><strong>[උත්සව ශාලාවේ නම]</strong></p>
+                    <p>[ලිපිනය]</p>
                     <a href="https://maps.google.com" target="_blank" class="map-btn">🗺️ Google Maps බලන්න</a>
                 </div>
             </div>
 
-            <div class="section animate-on-scroll">
+            <!-- COUNTDOWN TIMER SECTION -->
+            <div class="section">
                 <h3 class="section-title">❖ සුබ මොහොතට තව... ❖</h3>
                 <div class="countdown-grid">
-                    <div class="time-box"><div class="number">120</div><div class="label">දින</div></div>
-                    <div class="time-box"><div class="number">14</div><div class="label">පැය</div></div>
-                    <div class="time-box"><div class="number">32</div><div class="label">මිනිත්තු</div></div>
-                    <div class="time-box"><div class="number">45</div><div class="label">තත්පර</div></div>
+                    <div class="time-box"><div class="number" id="cd-days">00</div><div class="label">දින</div></div>
+                    <div class="time-box"><div class="number" id="cd-hours">00</div><div class="label">පැය</div></div>
+                    <div class="time-box"><div class="number" id="cd-minutes">00</div><div class="label">මිනිත්තු</div></div>
+                    <div class="time-box"><div class="number" id="cd-seconds">00</div><div class="label">තත්පර</div></div>
                 </div>
             </div>
 
-            <div class="section animate-on-scroll">
+            <!-- GOOGLE SHEETS RSVP FORM SECTION -->
+            <div class="section">
                 <h3 class="section-title">❖ පැමිණීම තහවුරු කරන්න ❖</h3>
                 <form class="rsvp-form" id="rsvp-form">
                     <div class="form-group">
@@ -327,7 +337,8 @@
                     <div class="form-group">
                         <label for="guests">පැමිණෙන ගණන:</label>
                         <select id="guests" name="count">
-                            <option value="1">1 යි</option>
+                            <option value="0">0 යි</option>
+                            <option value="1" selected>1 යි</option>
                             <option value="2">2 යි</option>
                             <option value="3+">3 යි හෝ ඊට වැඩි</option>
                         </select>
@@ -341,9 +352,9 @@
                 </form>
             </div>
 
-            <div class="footer animate-on-scroll">
-                <p>අපගේ සුබ මොහොතට ඔබ සැමට ආදරයෙන් ඇරයුම් කරමු!</p>
-                <button class="back-btn" onclick="openHeroPage()">▲ ආපසු මුල් පිටුවට</button>
+            <div class="section" style="border: none;">
+                <p style="color: #b5a48b;">අපගේ සුබ මොහොතට ඔබ සැමට ආදරයෙන් ඇරයුම් කරමු!</p>
+                <button class="back-btn" onclick="openHeroPage()">▲ මුල් පිටුවට</button>
             </div>
         </div>
     </div>
@@ -363,8 +374,6 @@
 
                 setTimeout(() => {
                     detailsPage.style.opacity = '1';
-                    initScrollObserver();
-                    startPetalAnimation();
                 }, 50);
             }, 800);
         }
@@ -380,133 +389,77 @@
                 detailsPage.style.display = 'none';
                 heroPage.style.visibility = 'visible';
                 heroPage.style.opacity = '1';
-
-                document.querySelectorAll('.animate-on-scroll').forEach(el => {
-                    el.classList.remove('active');
-                });
-
-                stopPetalAnimation();
+                window.scrollTo(0, 0);
             }, 800);
         }
 
-        function initScrollObserver() {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px 0px -50px 0px',
-                threshold: 0.05
-            };
+        /* Countdown Timer to 2027 Jan 15 */
+        const targetDate = new Date("2027-01-15T09:15:00+05:30").getTime();
+        setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, observerOptions);
-
-            document.querySelectorAll('.animate-on-scroll').forEach(section => {
-                observer.observe(section);
-            });
-        }
-
-        /* Rose Petal Animation Engine */
-        const canvas = document.getElementById('petal-canvas');
-        const ctx = canvas.getContext('2d');
-        let petals = [];
-        let animId;
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class RosePetal {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * -canvas.height;
-                this.size = Math.random() * 12 + 10;
-                this.speedY = Math.random() * 1.2 + 0.8;
-                this.speedX = Math.random() * 0.8 - 0.4;
-                this.angle = Math.random() * Math.PI * 2;
-                this.spin = (Math.random() - 0.5) * 0.02;
-                this.oscillationSpeed = Math.random() * 0.03 + 0.01;
-                this.oscillationDistance = Math.random() * 40 + 20;
-                this.initialX = this.x;
-                this.opacity = Math.random() * 0.4 + 0.5;
-                const colors = ['rgba(255, 182, 193, ', 'rgba(255, 105, 180, ', 'rgba(240, 128, 128, ', 'rgba(255, 192, 203, '];
-                this.color = colors[Math.floor(Math.random() * colors.length)];
+            if (distance > 0) {
+                document.getElementById("cd-days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24));
+                document.getElementById("cd-hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                document.getElementById("cd-minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById("cd-seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000);
             }
-            update() {
-                this.y += this.speedY;
-                this.x = this.initialX + Math.sin(this.y * this.oscillationSpeed) * this.oscillationDistance + this.speedX;
-                this.angle += this.spin;
-                if (this.y > canvas.height + 30) { this.reset(); this.y = -20; }
-            }
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
-                ctx.fillStyle = this.color + this.opacity + ')';
-                ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.bezierCurveTo(-this.size / 2, -this.size / 2, -this.size, this.size / 3, 0, this.size);
-                ctx.bezierCurveTo(this.size, this.size / 3, this.size / 2, -this.size / 2, 0, 0);
-                ctx.fill();
-                ctx.restore();
-            }
-        }
+        }, 1000);
 
-        function startPetalAnimation() {
-            petals = Array.from({ length: 40 }, () => new RosePetal());
-            function loop() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                petals.forEach(p => { p.update(); p.draw(); });
-                animId = requestAnimationFrame(loop);
+        /* Auto-set guest count to 0 when 'පැමිණීමට නොහැක' is selected */
+        const attendingSelect = document.getElementById('attending');
+        const guestsSelect = document.getElementById('guests');
+
+        attendingSelect.addEventListener('change', function() {
+            if (this.value === 'පැමිණීමට නොහැක') {
+                guestsSelect.value = '0';
+                guestsSelect.disabled = true;
+            } else {
+                if (guestsSelect.value === '0') {
+                    guestsSelect.value = '1';
+                }
+                guestsSelect.disabled = false;
             }
-            loop();
-        }
+        });
 
-        function stopPetalAnimation() {
-            cancelAnimationFrame(animId);
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        /* RSVP Form Handling - Fixed CORS & Data Submission */
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbybmiR7zcLCFEkbRHZVrMD9XH0FIF5SkXUgn-pxfvb6HAdjqsa5eJlJKdJ2xaQLJ2jhDA/exec';
+        /* Connected Google Sheet Web App URL */
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzovSYdk_XLpo3Ucvtr1BQ2Rc69z-RaDJBPrP3j1I4RcMhAjSG3R3I2QavXOCK4DvNZRQ/exec';
         const form = document.getElementById('rsvp-form');
-        const submitBtn = document.getElementById('submit-btn');
         const statusMsg = document.getElementById('status-message');
+        const submitBtn = document.getElementById('submit-btn');
 
         form.addEventListener('submit', e => {
             e.preventDefault();
-            
             submitBtn.disabled = true;
             submitBtn.innerText = 'යවමින් පවතී...';
-            statusMsg.style.display = 'none';
 
-            const formData = new FormData(form);
-            const data = new URLSearchParams(formData);
+            const attendingVal = attendingSelect.value;
+            const countVal = (attendingVal === 'පැමිණීමට නොහැක') ? '0' : guestsSelect.value;
 
-            fetch(scriptURL, { 
-                method: 'POST', 
-                body: data 
+            const formData = new FormData();
+            formData.append('name', document.getElementById('guest-name').value);
+            formData.append('attending', attendingVal);
+            formData.append('count', countVal);
+            formData.append('message', document.getElementById('message').value);
+
+            fetch(scriptURL, {
+                method: 'POST',
+                body: formData
             })
-            .then(response => {
-                statusMsg.style.color = '#d4af37';
-                statusMsg.innerText = 'ඔබගේ තොරතුරු සාර්ථකව සටහන් කරගන්නා ලදී. ස්තූතියි!';
+            .then(() => {
                 statusMsg.style.display = 'block';
+                statusMsg.style.color = '#75ff75';
+                statusMsg.innerText = 'ඔබගේ ප්‍රතිචාරය සාර්ථකව සටහන් කරගන්නා ලදී! ස්තූතියි!';
+                form.reset();
+                guestsSelect.disabled = false;
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'තහවුරු කරන්න';
-                form.reset();
             })
             .catch(error => {
-                console.error('Error!', error.message);
-                statusMsg.style.color = '#ff6b6b';
-                statusMsg.innerText = 'යම් දෝෂයක් සිදු විය. නැවත උත්සාහ කරන්න.';
                 statusMsg.style.display = 'block';
+                statusMsg.style.color = '#ff7575';
+                statusMsg.innerText = 'යම් දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.';
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'තහවුරු කරන්න';
             });
